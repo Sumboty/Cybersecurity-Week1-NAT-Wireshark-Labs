@@ -1,43 +1,65 @@
 # Cybersecurity Week 1 - NAT Network & Wireshark Labs
 By Sumboty | Networkwalks Academy
 
-## Overview
-This repo contains Week 1 labs: VirtualBox NAT Network configuration and Wireshark packet analysis including SOC investigation.
+## 🎯 Project Overview
+Week 1 extra project - Built a fully functional NAT Network lab with 3 VMs and verified bidirectional connectivity + Wireshark analysis.
 
-## Lab 01 - NAT Network 10.0.0.0/24
-- **Topology:** Kali 10.0.0.2/24, Windows Host 10.0.0.10, Android 10.0.0.9, Gateway 10.0.0.1
-- **Challenges Fixed:**
-    - Kali stuck on 10.0.0.4 - Error "IP configuration could not be reserved"
-    - Android black screen when minimized
-- **Solutions:**
-    - Clean Kali install, set NatNetwork 10.0.0.0/24, static IP 10.0.0.2/24 gw 10.0.0.1 dns 8.8.8.8
-    - Android: Video Memory 128MB, Graphics Controller VMSVGA, 3D Acceleration OFF, RAM 2048MB
-- **Verification:** Bidirectional pings 10.0.0.2 <-> 10.0.0.10 <-> 10.0.0.9 = 0% loss, Internet 8.8.8.8 reachable.
+### Network Topology: NAT Network `NatNetwork` - 10.0.0.0/24
+| Device | IP Address | Role |
+|--------|------------|------|
+| Gateway | 10.0.0.1 | NAT Gateway |
+| Kali Linux | 10.0.0.2 | Attacker / Analysis Machine |
+| Android | 10.0.0.9 | Client Device |
+| Windows Host | 10.0.0.10 | Management |
 
-## Lab 02 - Wireshark Live Capture
-- Website: networkwalks.com
-- Website IP: 192.232.216.135
-- Filter: dns.qry.name == "networkwalks.com"
-- Findings: SNI=networkwalks.com, Port 443, TLSv1.3
+## 📁 Folder Structure
 
-## Lab 03 - Wireshark PCAP Analysis
-- File: Wireshark_Lab2_Microsoft_DNS_v2.pcap
-- Laptop: 192.168.0.105, DNS: 8.8.8.8
-- Microsoft IPs: 20.70.246.20, 20.76.201.171, 20.112.250.133, 20.231.239.246, 20.236.44.162
-- Port 443, TLSv1.3
+### 01-NAT-Network-Lab - VirtualBox NAT Lab + Ping Proofs
+This folder contains all proof of NAT Network working with 0% packet loss.
 
-## Lab 04 - SOC Lab: Identify Attacker IP (Extra Project)
-- **Platform:** https://networkwalks.com/wireshark-lab3/
-- Total Packets: 309
-- SYN Packets: 73 (filter tcp.flags.syn == 1)
-- **Attacker:** 192.168.10.66
-- **Target:** 192.168.10.20 (Web Server)
-- Source Port: 52311
-- Ports Probed: 40, Open: 22,80,443, Closed: 37 (RST,ACK reply)
-- Attack Type: Port Scan
+**Files:**
+- `Kali-10.0.0.2-fixed-ip-a.png` - Kali IP fixed to 10.0.0.2/24 (was 10.0.0.4 reservation bug)
+- `VirtualBox-Kali-NATNetwork-NatNetwork-VMS...` - VirtualBox config: 128MB Video, VMSVGA, 3D OFF, NAT Network
+- `Kali-Final-Ping-4-way-0-loss-Gateway-Android...` - **MAIN PROOF**: Kali pings 10.0.0.1, 10.0.0.9, 10.0.0.10, 8.8.8.8 = 0% loss
+- `Windows-Final-Ping-3-way-0-loss-Kali-Android...` - Windows pings Kali, Android, Internet = 0% loss
+- `Android-Ping-0-loss-10.0.0.2-10.0.0.10-8.8.8.8...` - Android pings Kali, Windows, Internet = 0% loss
 
-## Screenshots
-All screenshots in respective folders.
+**Result:** Triangle verified - Full bidirectional 0% loss + Internet access!
 
-## Tools
-VirtualBox, Kali Linux, Wireshark, NAT Network
+![Kali 4-way Ping](./01-NAT-Network-Lab/Kali-Final-Ping-4-way-0-loss-Gateway-Android-Windows-Internet.png)
+![Windows 3-way Ping](./01-NAT-Network-Lab/Windows-Final-Ping-3-way-0-loss-Kali-Android-Internet.png)
+
+### 02-Wireshark-Lab - Traffic Analysis
+Domain analyzed: `networkwalks.com` -> `192.232.216.135`
+
+**Files:**
+- `Wireshark-Lab1-DNS-192.232.216.135.png` - DNS query and response
+- `Wireshark-Lab1-SNI-networkwalks.com.png` - TLS SNI filtering for networkwalks.com
+
+**Findings:**
+- SNI clearly shows networkwalks.com in Client Hello
+- DNS A record 192.232.216.135 verified
+- TLSv1.3 handshake
+
+![Wireshark SNI](./02-Wireshark-Lab/Wireshark-Lab1-SNI-networkwalks.com.png)
+
+### 03-Quiz - Wireshark Quiz
+- `Wireshark-Quiz-80-Percent-30Oct2026.png` - Quiz result 80% - 30 Oct 2026
+
+## 🔧 Troubleshooting Done (Real SOC Skills)
+1.  **Fixed Kali IP 10.0.0.4 bug:** Fresh Kali install, configured /etc/network/interfaces for 10.0.0.2/24, gateway 10.0.0.1
+2.  **Fixed Android Black Screen:** Set VirtualBox -> Display -> Video Memory 128MB, Graphics Controller VMSVGA, Uncheck 3D Acceleration
+3.  **Verified NAT Network:** Created NatNetwork 10.0.0.0/24 with DHCP enabled
+
+## ✅ Final Verification
+- [x] Kali 10.0.0.2 <-> Gateway 10.0.0.1 = 0% loss
+- [x] Kali 10.0.0.2 <-> Android 10.0.0.9 = 0% loss
+- [x] Kali 10.0.0.2 <-> Windows 10.0.0.10 = 0% loss
+- [x] All VMs -> Internet 8.8.8.8 = 0% loss
+- [x] Wireshark DNS + SNI verified
+- [x] Quiz 80%
+
+## 🔗 Repo Link
+https://github.com/Sumboty/Cybersecurity-Week1-NAT-Wireshark-Labs
+
+Ready for Week 2!
